@@ -14,3 +14,5 @@ Please note that this is automatically generated, there might be flaws and thing
 - Scarfy sprite by **Eiden Marsal**
 - Cyberpunk Street Environment by **Luis Zuno (@ansimuz)**
 - Icon by me (Public Domain)
+
+![Screenshot](./screenshots/Example.PNG?raw=true "Screenshot")
