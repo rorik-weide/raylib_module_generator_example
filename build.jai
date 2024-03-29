@@ -41,7 +41,7 @@ MODULE_NAME :: "raylib";
 
   // Generate Raylib module if it does not exist.
   if !file_exists("local_modules/raylib") {
-    generate_raylib_module("raylib", VENDOR_DIRECTORY);
+    generate_raylib_module(MODULE_NAME, VENDOR_DIRECTORY);
   }
 
   workspace := compiler_create_workspace(PROJECT_NAME);
@@ -121,7 +121,7 @@ va_list :: *void;
   shell32 :: #system_library,link_always "shell32";
   winmm   :: #system_library,link_always "winmm";
   raylib  :: #library "lib/windows/raylib";
-else #if OS == .LINUX {
+} else #if OS == .LINUX {
   // Ensure we link to libm for math functions
   #library,system,link_always "libm";
   raylib  :: #library "lib/linux/raylib";
