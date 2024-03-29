@@ -4,8 +4,8 @@
 
 #import "Basic";
 #import "Random";
-#import "raylib_win64";
 
+#import "raylib";
 
 // Constants:
 WINDOW_WIDTH  :: 1280;

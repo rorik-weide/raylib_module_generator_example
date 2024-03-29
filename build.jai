@@ -17,6 +17,20 @@
 
 #load "config.jai";
 
+MODULE_NAME :: "raylib";
+
+#if OS == .WINDOWS {
+  LIBRARY_NAME     :: "raylib";
+  VENDOR_DIRECTORY :: "vendor/raylib-4.5.0_win64_msvc16";
+  LIBRARY_FILES    :: string.["raylib.lib", "raylib.dll", "raylibdll.lib"];
+} else #if OS == .LINUX {
+  LIBRARY_NAME     :: "libraylib";
+  VENDOR_DIRECTORY :: "vendor/raylib-4.5.0_linux_amd64";
+  LIBRARY_FILES    :: string.["libraylib.a", "libraylib.so", "libraylib.so.4.5.0", "libraylib.so.450"];
+} else {
+  #assert false;
+}
+
 // Build the project based on configuration from { config.jai }.
 #run {
   // Settings for build during compilation.
@@ -26,8 +40,8 @@
   });
 
   // Generate Raylib module if it does not exist.
-  if !file_exists("local_modules/raylib_win64") {
-    generate_raylib_module("raylib_win64", "vendor/raylib-4.5.0_win64_msvc16");
+  if !file_exists("local_modules/raylib") {
+    generate_raylib_module("raylib", VENDOR_DIRECTORY);
   }
 
   workspace := compiler_create_workspace(PROJECT_NAME);
@@ -101,11 +115,17 @@ va_list :: *void;
 
   // Link against system libraries we need in the { module.jai } footer (order matters).
   footer = #string MODULE_FOOTER
-user32  :: #system_library,link_always "user32";
-gdi32   :: #system_library,link_always "gdi32";
-shell32 :: #system_library,link_always "shell32";
-winmm   :: #system_library,link_always "winmm";
-raylib  :: #library "lib/raylib";
+#if OS == .WINDOWS {
+  user32  :: #system_library,link_always "user32";
+  gdi32   :: #system_library,link_always "gdi32";
+  shell32 :: #system_library,link_always "shell32";
+  winmm   :: #system_library,link_always "winmm";
+  raylib  :: #library "lib/windows/raylib";
+else #if OS == .LINUX {
+  // Ensure we link to libm for math functions
+  #library,system,link_always "libm";
+  raylib  :: #library "lib/linux/raylib";
+}
   MODULE_FOOTER
 
   // Add { Raylib } files to the generator.
@@ -113,15 +133,23 @@ raylib  :: #library "lib/raylib";
   raylib_include_directory := tprint("%/include", raylib_path);
 
   array_add(*libpaths, raylib_lib_directory);
-  array_add(*libnames, "raylib");
+  array_add(*libnames, LIBRARY_NAME);
   array_add(*include_paths, raylib_include_directory);
   array_add(*source_files, ..string.["raylib.h", "raymath.h", "rlgl.h"]);
-  array_add(*system_library_names, ..string.["user32", "gdi32", "shell32", "winmm"]);
+
+  #if OS == .WINDOWS {
+    array_add(*system_library_names, ..string.["user32", "gdi32", "shell32", "winmm"]);
+  }
+
   array_add(*system_include_paths, GENERATOR_DEFAULT_SYSTEM_INCLUDE_PATH);
 
   // Generate module directory.
   raylib_module_directory     := tprint("%/%", LOCAL_MODULE_IMPORT_DIRECTORY, module_name);
-  raylib_module_lib_directory := tprint("%/lib", raylib_module_directory);
+  #if OS == .WINDOWS {
+    raylib_module_lib_directory := tprint("%/lib/windows", raylib_module_directory);
+  } else #if OS == .LINUX {
+    raylib_module_lib_directory := tprint("%/lib/linux", raylib_module_directory);
+  }
   raylib_module_file          := tprint("%/module.jai", raylib_module_directory);
 
   make_directory_if_it_does_not_exist(raylib_module_directory, true);
@@ -132,7 +160,7 @@ raylib  :: #library "lib/raylib";
   // Copy library files.
   make_directory_if_it_does_not_exist(raylib_module_lib_directory, true);
 
-  for string.["raylib.lib", "raylib.dll", "raylibdll.lib"] {
+  for LIBRARY_FILES {
     file_src  := tprint("%/%", raylib_lib_directory, it);
     file_dest := tprint("%/%", raylib_module_lib_directory, it);
 
