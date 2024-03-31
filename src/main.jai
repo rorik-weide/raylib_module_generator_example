@@ -159,7 +159,7 @@ main :: () {
       }
 
       start_y += 25;
-      DrawText("Use LEFT and RIGHT arrow key to increase ANIMATION SPEED.", start_x+5, start_y, 20, COL_WHITE);
+      DrawText("Use LEFT and RIGHT arrow key to change ANIMATION SPEED.", start_x+5, start_y, 20, COL_WHITE);
 
       start_y += 25;
       DrawFPS(start_x+5, start_y);
