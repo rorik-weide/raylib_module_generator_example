@@ -46,7 +46,6 @@ main :: () {
   current_frame := 0;
   frame_counter := 0;
   frame_speed   := 8;
-  tick          := 200;
   back_scroll   := 0.0;
   mid_scroll    := 0.0;
   for_scroll    := 0.0;
@@ -108,7 +107,6 @@ main :: () {
       BeginDrawing();
       defer {
         ClearBackground(COL_BLACK);
-        EndDrawing();
       }
 
       // Draw the scene:
@@ -165,8 +163,8 @@ main :: () {
 
       start_y += 25;
       DrawFPS(start_x+5, start_y);
+
+      EndDrawing();
     }
   }
 }
-
-#scope_file
