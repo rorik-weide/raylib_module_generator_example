@@ -136,11 +136,6 @@ va_list :: *void;
   array_add(*libnames, LIBRARY_NAME);
   array_add(*include_paths, raylib_include_directory);
   array_add(*source_files, ..string.["raylib.h", "raymath.h", "rlgl.h"]);
-
-  #if OS == .WINDOWS {
-    array_add(*system_library_names, ..string.["user32", "gdi32", "shell32", "winmm"]);
-  }
-
   array_add(*system_include_paths, GENERATOR_DEFAULT_SYSTEM_INCLUDE_PATH);
 
   // Generate module directory.
