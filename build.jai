@@ -1,10 +1,7 @@
 /* 
 # Build
   
-  { Raylib } bindings generator works on Windows, it's probably not too different on Linux, but
-  I don't use Linux so I do not know for sure.
-
-  The only function which matters is { generate_raylib_module }.
+  { Raylib } bindings generator works on Windows/Linux. The only function which matters is { generate_raylib_module }.
 */
 
 #scope_file
