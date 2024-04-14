@@ -111,19 +111,21 @@ va_list :: *void;
   MODULE_HEADER
 
   // Link against system libraries we need in the { module.jai } footer (order matters).
+  #if OS == .WINDOWS {
   footer = #string MODULE_FOOTER
-#if OS == .WINDOWS {
-  user32  :: #system_library,link_always "user32";
-  gdi32   :: #system_library,link_always "gdi32";
-  shell32 :: #system_library,link_always "shell32";
-  winmm   :: #system_library,link_always "winmm";
-  raylib  :: #library "lib/windows/raylib";
-} else #if OS == .LINUX {
-  // Ensure we link to libm for math functions
-  #library,system,link_always "libm";
-  raylib  :: #library "lib/linux/raylib";
-}
-  MODULE_FOOTER
+user32  :: #system_library,link_always "user32";
+gdi32   :: #system_library,link_always "gdi32";
+shell32 :: #system_library,link_always "shell32";
+winmm   :: #system_library,link_always "winmm";
+raylib  :: #library "lib/windows/raylib";
+MODULE_FOOTER
+  } else if OS == .LINUX {
+  footer = #string MODULE_FOOTER
+// Ensure we link to libm for math functions
+#library,system,link_always "libm";
+raylib  :: #library "lib/linux/raylib";
+MODULE_FOOTER
+  }
 
   // Add { Raylib } files to the generator.
   raylib_lib_directory     := tprint("%/lib", raylib_path);

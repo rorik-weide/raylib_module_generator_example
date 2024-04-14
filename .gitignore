@@ -1,0 +1,4 @@
+# Directories
+bin/*
+!bin/assets/*
+local_modules/*
